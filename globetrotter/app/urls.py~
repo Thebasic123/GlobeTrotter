@@ -1,0 +1,11 @@
+from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.home, name='home'),
+    url(r'country/(?P<name>[A-Za-z]+)/$', views.country, name='country'),
+    url(r'city$', views.city, name='city'),
+    url(r'user/[A-Za-z0-9@\.]+/itinerary$', views.itinerary, name='itinerary'),
+    url(r'^api/get_cities/', 'myproject.main.view.cities', name='get_drugs'),
+    url(r'user/logout$', views.logout, name='logout')
+]

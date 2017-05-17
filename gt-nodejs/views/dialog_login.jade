@@ -1,0 +1,25 @@
+extends layout
+
+block content
+	nav(class='navbar navbar-inverse navbar-fixed-top')
+		div(class='container-fluid')
+			div(class='navbar-header')
+				a(class='navbar-brand', href="/") GlobeTrotter
+	div(class='container')
+		div(class='row')
+			form(
+				role="form"
+				action='/user/login'
+				method='post'
+			)
+				div(class='form-group')
+					label(for='emailInput') Email
+					input(type='email', class='form-control', id='emailInput', placeholder='Email', name='user')
+				div(class='form-group')
+					label(for='password1Input') Password
+					input(type='password', class='form-control', id='password1Input', placeholder='Password', name='password')
+				div(class='form-group')
+					p #{error}
+					button(type='submit', class='btn btn-primary') Log in
+				div(class='form-group')
+					a(href="/dialog/register") New to Globetrotter?

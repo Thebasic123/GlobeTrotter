@@ -1,0 +1,7 @@
+[{
+	"pk": "Australia",
+	"model": "app.country",
+	"fields": {
+		"cities": "['Sydney','Melbourne']"
+	}
+}]

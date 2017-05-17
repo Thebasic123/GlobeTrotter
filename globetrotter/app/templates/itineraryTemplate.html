@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)http://getbootstrap.com/examples/theme/ -->
+<html lang="en" hola_ext_inject="disabled">
+<head>
+    {% load static %}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="{% static "favicon.gif" %}">
+
+    <title>GlobeTrotter - Itinerary</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+
+    <!-- Bootstrap theme -->
+    <link href="{% static "bootstrap/css/bootstrap-theme.css" %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static "bootstrap/css/myTheme.css" %}" rel="stylesheet">
+
+    
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{% static "bootstrap/js/validator.js" %}"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script type="text/javascript">
+    // Change JQueryUI plugin names to fix name collision with Bootstrap.
+    $.widget.bridge('uitooltip', $.ui.tooltip);
+    $.widget.bridge('uibutton', $.ui.button);
+    </script>
+
+    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <style type="text/css">
+      @font-face {
+        font-family: Khadija;
+        src: local("Khadija"),
+             url({% static "Khadija.ttf" %});
+        /*font-weight: bold;*/
+      }
+
+      #brand-logo {
+        font-family: Khadija;
+        font-size: 26px;
+      }
+    </style>
+  </head>
+
+  <body role="document">
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/" id="brand-logo">GlobeTrotter</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" id="#navbar">
+        {% if not isLoggedIn %}
+          <div class="ui-widget">
+            <form class="navbar-form navbar-left" role="search" method="GET" action="/city">
+              <div class="form-group">
+                <input type="text" id="cities" class="form-control" placeholder="Search" name="query">
+              </div>
+              <button type="submit" class="btn btn-default">Search</button>
+            </form>
+          </div>
+          <form class="navbar-form navbar-right">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signupModal">Sign up</button>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#loginModal">Log in</button>
+          </form>
+        {% else %}
+
+          <ul class="nav navbar-nav navbar-right">
+              <li>
+                <div class="ui-widget">
+                  <form class="navbar-form navbar-left" role="search" method="GET" action="/city">
+                    <div class="form-group">
+                      <input type="text" id="cities" class="form-control" placeholder="Search" name="query">
+                    </div>
+                    <button type="submit" class="btn btn-default">Search</button>
+                  </form>
+                </div>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> My Account: {{ userEmail }} <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="itinerary?user={{userEmail}}">My Itinerary</a></li>
+                  <li><a href="user/logout">Log Out</a></li>
+                </ul>
+              </li>
+            </ul>
+        {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <!--Contact Us-->
+  <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Contact Us</h4>
+        </div>
+
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="emailInput">Email</label>
+              <input type="email" class="form-control" id="emailInput" placeholder="Email">
+            </div>
+
+            <div class="form-group">
+              <label for="subjectInput">Subject</label>
+              <input type="text" class="form-control" id="subjectInput" placeholder="Subject">
+            </div>
+
+            <div class="form-group">
+              <label for="textBody">Text Body</label>
+              <textarea rows="5" cols="50" class="form-control" id="textBody"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--About Us-->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">About Us</h4>
+        </div>
+
+        <div class="modal-body">
+          <p>
+          This web app is designed to simplify your travelling plans. 
+          Just search a city or country and get access to the most popular attractions and restaurants. 
+          Let us be your one-stop shop for all things travel. Make your itinerary right here, 
+          and let us recommend even more places for you to go. 
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sign up -->
+  <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Sign up</h4>
+        </div>
+
+        <div class="modal-body">
+          <form method="POST" data-toggle="validator" action="/user/register">
+            <div class="form-group">
+              <label for="emailInput">Email</label>
+              <input type="email" class="form-control" id="emailInput" placeholder="Email" name="email" data-error="That is not a valid email" required>
+              <div class="help-block with-errors"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="password1Input">Password</label>
+              <input type="password" class="form-control" id="password1Input" placeholder="Password" name="pass" data-minlength="6" required>
+              <span class="help-block">Minimum of 6 characters</span>
+            </div>
+
+            <div class="form-group">
+              <label for="password2Input">Confirm Password</label>
+              <input type="password" class="form-control" id="password2Input" placeholder="Confirm Password" name="passconfirm" data-match="#password1Input" data-match-error="Whoops, these don't match">
+              <div class="help-block with-errors"></div>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Sign Up</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Log In -->
+  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Log In</h4>
+        </div>
+
+        <div class="modal-body">
+          <form method="POST" action="/">
+            <div class="form-group">
+              <label for="emailInput">Email</label>
+              <input type="email" class="form-control" id="emailInput" placeholder="Email" name="email">
+            </div>
+
+            <div class="form-group">
+              <label for="password1Input">Password</label>
+              <input type="password" class="form-control" id="password1Input" placeholder="Password" name="pass">
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Log In</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sharing active -->
+  <div class="modal fade" id="sharingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Sharing Activated</h4>
+        </div>
+
+        <div class="modal-body">
+          <p>You have now enabled sharing on your itinerary. Now you may share your itinerary with other people!</p>
+
+          <p>Simply send them this link: localhost:8000/itinerary?user={{userEmail}}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="container theme-showcase" role="main">
+
+      <div class="page-header">
+        <h1><b>Your Itinerary: {{ userEmail }}</b></h1>
+      </div>
+
+      <div id="map" style="height:400px; width:800px;">
+      </div>
+
+      
+      <div class="container">
+        <h3>Pinned Locations</h3>
+        {% if isLoggedIn == True %}
+        <p>
+          Click on a location to unpin it from your intinerary.
+        </p>
+        {% endif %}
+
+        <div class="row">
+          <div class = "col-md-4">
+            <h4>Attractions</h4>
+
+            <div class="list-group">
+              {% for a in attractions %}
+                <form method="POST" action="/itinerary?user={{ userEmail }}">
+                  <input type="hidden" name="removeAttraction" value="True">
+                  <input type="hidden" name="attractionId" value="{{ a.place_id }}">
+                  {% if isLoggedIn == True %}
+                    <button type="submit" class="list-group-item">{{ a.name }}</button>
+                  {% else %}
+                    <button class="list-group-item">{{ a.name }}</button>
+                  {% endif %}
+                </form>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class = "col-md-4">
+            <h4>Restaurants</h4>
+
+            <div class="list-group">
+              <form method="POST" action="/itinerary?user={{ userEmail }}">
+                <input type="hidden" name="removeRestaurant" value="True">
+                {% for r in restaurants %}
+                  <input type="hidden" name="restaurantId" value="{{ r.restaurant_id }}">
+                  <button type="submit" class="list-group-item">{{ r.name }}</button>
+                {% endfor %}
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {% if isLoggedIn == True %}
+          <div class="row">
+
+            <h3>Recommended Locations</h3>
+            <p>
+              Based on the above, we have some more recommendations for you. Click a location below to add to your itinerary.
+            </p>
+
+            <div class = "col-md-4">
+              <h4>Attractions</h4>
+
+              <div class="list-group">
+                {% for a in recommendedAttractions %}
+                  <form method="POST" action="/itinerary?user={{ userEmail }}">
+                    <input type="hidden" name="addAttraction" value="True">
+                    <input type="hidden" name="attractionId" value="{{ a.pk }}">
+                    <input type="hidden" name="attractionName" value="{{ a.name }}">
+                    <input type="hidden" name="attractionAddress" value="{{ a.address }}">
+                    <input type="hidden" name="attractionRating" value="{{ a.rating }}">
+                    <input type="hidden" name="attractionLatitude" value="{{ a.latitude }}">
+                    <input type="hidden" name="attractionLongitude" value="{{ a.longitude }}">
+                    <input type="hidden" name="attractionPic" value="{{ a.pic }}">
+                    <input type="hidden" name="attractionCity" value="{{ a.city }}">
+                    {% if isLoggedIn == True %}
+                      <button type="submit" class="list-group-item">{{ a.name }}</button>
+                    {% else %}
+                      <button class="list-group-item">{{ a.name }}</button>
+                    {% endif %}
+                  </form>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class = "col-md-4">
+              <h4>Restaurants</h4>
+
+              <div class="list-group">
+                {% for r in recommendedRestaurants %}
+                  <form method="POST" action="/itinerary?user={{ userEmail }}">
+                    <input type="hidden" name="addRestaurant" value="True">
+                    <input type="hidden" name="restaurantId" value="{{ r.rId }}">
+                    <input type="hidden" name="restaurantName" value="{{ r.name }}">
+                    <input type="hidden" name="restaurantAddress" value="{{ r.address }}">
+                    <input type="hidden" name="restaurantRating" value="{{ r.rating }}">
+                    <input type="hidden" name="restaurantLatitude" value="{{ r.latitude }}">
+                    <input type="hidden" name="restaurantLongitude" value="{{ r.longitude }}">
+                    <input type="hidden" name="restaurantPic" value="{{ r.pic }}">
+                    <input type="hidden" name="restaurantCity" value="{{ r.city }}">
+                    {% if isLoggedIn == True %}
+                      <button type="submit" class="list-group-item">{{ r.name }}</button>
+                    {% else %}
+                      <button class="list-group-item">{{ r.name }}</button>
+                    {% endif %}
+                  </form>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <h3>Sharing</h3>
+            <p>Share mode: 
+            {% if shareable == True %}
+              On </p> 
+              <p> Link: <input type="text" name="shareLink" value="localhost:8000/itinerary?user={{ userEmail }}" readonly></p>
+              </p>
+              <form method="POST" action="/itinerary?user={{ userEmail }}">
+                <input type="hidden" name="shareToggle" value="True">
+                <button type="submit" class="btn btn-primary">Unshare</button>
+              </form>
+            {% else %}
+              Off
+              </p>
+
+              <p>
+                Click below to allow others to view your itinerary.
+              </p>
+              <form method="POST" action="/itinerary?user={{ userEmail }}">
+                <input type="hidden" name="shareToggle" value="True">
+                <button type="submit" class="btn btn-primary">Share</button>
+              </form>
+            {% endif %}
+            
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+
+    <script>
+
+      function initMap() {
+        var myLatLng = {lat: -27, lng: 133};
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: myLatLng
+        });
+        var bounds = new google.maps.LatLngBounds();
+        {% for a in attractions %}
+        var content{{a.place_id}} =   '<div id="content">'+
+                                      '<div id="siteNotice">'+
+                                      '</div>'+
+                                      '<h1 id="firstHeading" class="firstHeading">{{a.name}} - {{a.rating}}</h1>'+
+                                      '<div id="bodyContent">{{a.address}}</div>'+
+                                      '</div>';
+        var infowindow{{a.place_id}} = new google.maps.InfoWindow({
+          content: content{{a.place_id}}
+        });
+        var marker{{a.place_id}} = new google.maps.Marker({
+          position: {lat: {{a.latitude}}, lng: {{a.longitude}}},
+          map: map,
+          animation: google.maps.Animation.DROP,
+          title: '{{ a.name }}'
+        });
+        marker{{a.place_id}}.addListener('click', function() {
+          infowindow{{a.place_id}}.open(map, marker{{a.place_id}});
+        });
+        bounds.extend(marker{{a.place_id}}.getPosition());
+        map.fitBounds(bounds);
+        {% endfor %}
+        {% for a in restaurants %}
+        marker = new google.maps.Marker({
+          position: {lat: {{a.latitude}}, lng: {{a.longitude}}},
+          map: map,
+          animation: google.maps.Animation.DROP,
+          title: '{{ a.name }}'
+        });
+        bounds.extend(marker.getPosition());
+        map.fitBounds(bounds);
+        {% endfor %}
+        
+      }
+
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
+
+    <script type="text/javascript">
+      $(function() {
+        $("#cities").autocomplete({
+          source: "/api/get_cities/",
+          minLength: 1,
+        });
+      });
+
+      $(window).load(function(){
+            $('{{ activateThis }}').modal('show');
+        });
+    </script>
+  
+  </body>
+</div> <!-- /container -->
+  <!--<div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container">
+      <p class="text-muted">
+      &copy; Gang of Four 2015 | 
+
+      <a data-toggle="modal" data-target="#contactModal">Contact Us</a>
+      <a data-toggle="modal" data-target="#aboutModal">About Us</a>
+      </p>
+    </div>
+  </div>-->
+</html>

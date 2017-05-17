@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{% load staticfiles %}
+		<link 	rel="icon"
+				type="image/png"
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>GlobeTrotter</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+		<link href='https://fonts.googleapis.com/css?family=Ubuntu:400,700,500' rel='stylesheet' type='text/css'>
+		<link rel="shortcut icon" href="{% static "favicon.gif" %}">
+		
+		<script src="http://code.jquery.com/jquery.js"></script>
+	    <script src="{% static "bootstrap/js/validator.js" %}"></script>
+
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	    
+
+	    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	    <script type="text/javascript">
+	    // Change JQueryUI plugin names to fix name collision with Bootstrap.
+	    $.widget.bridge('uitooltip', $.ui.tooltip);
+	    $.widget.bridge('uibutton', $.ui.button);
+	    </script>
+
+	    <script type="text/javascript" src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+
+
+
+		<style type="text/css">
+			@font-face {
+			  font-family: Khadija;
+			  src: local("Khadija"),
+			       url({% static "Khadija.ttf" %});
+			  /*font-weight: bold;*/
+			}
+
+			#brand-logo {
+				font-family: Khadija;
+				font-size: 26px;
+			}
+
+			#globeTrotter-logo {
+				margin-top: 35px;
+				margin-bottom: 35px;
+				font-family: Khadija;
+				font-size: 108px;
+				text-align: center;
+			}
+
+			body {
+				background-image: url("{% static "background1.svg" %}");
+    			background-color: transparent;
+    			background-repeat: no-repeat;
+    			background-size:cover;
+			}
+
+			#popularCities {
+				margin-top: 25px;
+			}
+
+
+
+			.footer {
+				background-color: #f5f5f5;
+			}
+
+
+			@media (max-width: 767px) {
+				.footer {
+				  margin-left: -20px;
+				  margin-right: -20px;
+				  padding-left: 20px;
+				  padding-right: 20px;
+				}
+			}
+			/*
+			.footer {
+			    position: relative;
+			    bottom: 0;
+			    width: 100%;
+			    height: 40px;
+			    background-color: #f5f5f5;
+			}*/
+
+			.container .text-muted {
+			    margin: 10px 0;
+			}
+		</style>
+
+		<script type="text/javascript">
+		    $(window).load(function(){
+		        $('{{ activateThis }}').modal('show');
+		    });
+
+		    $(function() {
+			  $("#cities").autocomplete({
+			    source: "/api/get_cities/",
+			    minLength: 1,
+			  });
+			});
+		</script>
+	</head>
+
+
+	<body style="padding-top: 70px">
+
+	<!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/" id="brand-logo">GlobeTrotter</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" id="#navbar">
+        {% if isLoggedIn == False %}
+          <form class="navbar-form navbar-right">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signupModal">Sign up</button>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#loginModal">Log in</button>
+          </form>
+        {% else %}
+        	<ul class="nav navbar-nav navbar-right">
+	            <li class="dropdown">
+	              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> My Account:{{ userEmail }} <span class="caret"></span></a>
+	              <ul class="dropdown-menu">
+	                <li><a href="itinerary?user={{userEmail}}">My Itinerary</a></li>
+	                <li><a href="user/logout">Log Out</a></li>
+	              </ul>
+	            </li>
+	          </ul>
+        {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <!-- Sign up -->
+	<div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Sign up</h4>
+				</div>
+
+				<div class="modal-body">
+					<form method="POST" data-toggle="validator" action="/">
+						<input type="hidden" name="signupInitiated" value="True">
+						<div class="form-group">
+							<label for="emailInput">Email</label>
+							<input type="email" class="form-control" id="emailInput" placeholder="Email" name="email" data-error="That is not a valid email" required>
+							<div class="help-block with-errors"></div>
+						</div>
+
+						<div class="form-group">
+							<label for="password1Input">Password</label>
+							<input type="password" class="form-control" id="password1Input" placeholder="Password" name="pass" data-minlength="6" required>
+							<span class="help-block">Minimum of 6 characters</span>
+						</div>
+
+						<div class="form-group">
+							<label for="password2Input">Confirm Password</label>
+							<input type="password" class="form-control" id="password2Input" placeholder="Confirm Password" name="passconfirm" data-match="#password1Input" data-match-error="Whoops, these don't match">
+							<div class="help-block with-errors"></div>
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary">Sign Up</button>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Sign up Success-->
+	<div class="modal fade" id="signupSuccess" tabindex="-1"  role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3 class="modal-title" id="myModalLabel">Sign Up Successful</h3>
+				</div>
+
+				<div class="modal-body">
+					<p>Thank you for creating an account with GlobeTrotter. Now you're free to create your ultimate travel itinerary!</p>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Sign up Fail-->
+	<div class="modal fade" id="signupFail" tabindex="-1"  role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3 class="modal-title" id="myModalLabel">Login Failure</h3>
+				</div>
+
+				<div class="modal-body">
+					<p>That email is already being used. Please try another email.</p>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<a class="btn" data-toggle="modal" href="#signupModal">Try Again</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="loginFail" tabindex="-1"  role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3 class="modal-title" id="myModalLabel">Login Failure</h3>
+				</div>
+
+				<div class="modal-body">
+					<p>That email and password combination were not found in our system. Please try again.</p>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<a class="btn" data-toggle="modal" href="#loginModal">Try Again</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Log In -->
+	<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Log In</h4>
+				</div>
+
+				<div class="modal-body">
+					<form method="POST" action="/">
+						<input type="hidden" name="logInInitiated" value="True">
+						<div class="form-group">
+							<label for="emailInput">Email</label>
+							<input type="email" class="form-control" id="emailInput" placeholder="Email" name="email">
+						</div>
+
+						<div class="form-group">
+							<label for="password1Input">Password</label>
+							<input type="password" class="form-control" id="password1Input" placeholder="Password" name="pass">
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary">Log In</button>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--Contact Us-->
+	<div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">Contact Us</h4>
+				</div>
+
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="emailInput">Email</label>
+							<input type="email" class="form-control" id="emailInput" placeholder="Email">
+						</div>
+
+						<div class="form-group">
+							<label for="subjectInput">Subject</label>
+							<input type="text" class="form-control" id="subjectInput" placeholder="Subject">
+						</div>
+
+						<div class="form-group">
+							<label for="textBody">Text Body</label>
+							<textarea rows="5" cols="50" class="form-control" id="textBody"></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Send</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--About Us-->
+	<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="myModalLabel">About Us</h4>
+				</div>
+
+				<div class="modal-body">
+					<p>
+					This web app is designed to simplify your travelling plans. 
+					Just search a city or country and get access to the most popular attractions and restaurants. 
+					Let us be your one-stop shop for all things travel. Make your itinerary right here, 
+					and let us recommend even more places for you to go. 
+					</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class='container'>
+		<div class="row">
+			<div id="globeTrotter-logo"><!--<img src="{% static "Globe.jpg" %}">--> GlobeTrotter</div>
+			<!--<div class="col-sm-7 col-sm-offset-1">
+			    <a href="/"><img src="{%static "logo.png"%}"></img></a>
+			    <div id="globeTrotter-logo><img src="{% static "Globe.jpg" %}"> GlobeTrotter</div>
+		  	</div>-->
+		</div>
+	    <div class="row search">
+	  		<div class="col-sm-8 col-sm-offset-2">
+	  			
+				    <form role="form" method="GET" action="/city">
+			            <div class="input-group">
+			              <div class="ui-widget">
+			                <input type="text" id="cities" class="form-control input-lg" placeholder="Enter a country or city here..." name="query">
+			              </div>
+			              <span class="input-group-btn">
+			                <button class="btn btn-default btn-lg" type="submit"><span class="glyphicon glyphicon-search"></span> Search</button>
+			              </span>
+			            </div>
+				    </form>
+			    
+		  </div>
+		</div>
+
+		<div class="row" id="popularCities">
+			<div class="col-md-3 col-md-offset-3 col-sm-3">
+				<div class="thumbnail">
+					<a href="/city?query=Sydney">
+						<h4>Sydney</h4>
+						<img src="http://img.visitacityltd.netdna-cdn.com/images/uploaded-new/227224" height="250px" width="250px">
+					</a>
+				</div>
+			</div>
+
+			<div class="col-md-3 col-sm-3">
+				<div class="thumbnail">
+					
+					<a href="/city?query=Melbourne">
+						<h4>Melbourne</h4>
+						<img src="http://img.visitacityltd.netdna-cdn.com/images/uploaded-new/227226" height="250px" width="250px">
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	</body>
+
+
+	<div class="navbar navbar-default navbar-fixed-bottom">
+		<div class="container">
+			<p class="text-muted">
+			&copy; Gang of Four 2015 | 
+
+			<a data-toggle="modal" data-target="#contactModal">Contact Us</a>
+			<a data-toggle="modal" data-target="#aboutModal">About Us</a>
+			</p>
+		</div>
+	</div>
+
+	
+</html>
+

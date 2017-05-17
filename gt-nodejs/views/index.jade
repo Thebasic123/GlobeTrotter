@@ -1,0 +1,107 @@
+extends layout
+
+block content
+	nav(class='navbar navbar-inverse navbar-fixed-top')
+		div(class='container-fluid')
+			div(class='navbar-header')
+				a(class='navbar-brand', href="/") GlobeTrotter
+			if !authorised
+				div(id="navbar", class="navbar-collapse collapse")
+					form(class='navbar-form navbar-right')
+						button(type='button', class='btn btn-primary', data-toggle='modal', data-target='#signupModal') Sign up
+						button(type='button', class='btn btn-info', data-toggle='modal', data-target='#loginModal') Log in
+			else 
+				div(id="navbar", class="navbar-collapse collapse")
+					form(
+						class='navbar-form navbar-right'
+						role="form"
+						action='/user/logout'
+						method='post'
+					)
+						button(type='submit', class='btn btn-primary') Log out
+	if !authorised
+		div(class='modal fade', id='signupModal', tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
+			div(class='modal-dialog', role='document')
+				div(class='modal-content')
+					div(class='modal-header')
+						button(type="button", class="close", data-dismiss="modal", aria-label="Close")
+							span(aria-hidden='true') &times;
+						h4(class='modal-title', id='myModalLabel') Sign up
+					div(class='modal-body')
+						form(
+							role="form"
+							action='/user/register'
+							method='post'
+						)
+							div(class='form-group')
+								label(for='emailInput') Email
+								input(type='email', class='form-control', id='emailInput', placeholder='Email', name='email')
+							div(class='form-group')
+								label(for='password1Input') Password
+								input(type='password', class='form-control', id='password1Input', placeholder='Password', name='pass')
+							div(class='form-group')
+								label(for='password2Input') Confirm Password
+								input(type='password', class='form-control', id='password2Input', placeholder='Confirm Password', name='passconfirm')
+							div(class='form-group')
+								button(type='submit', class='btn btn-primary') Sign Up
+					div(class='modal-footer')
+						button(type="button", class="btn btn-default", data-dismiss="modal") Close
+
+		div(class='modal fade', id='loginModal', tabindex='-1', role='dialog', aria-labelledby='myModalLabel')
+			div(class='modal-dialog', role='document')
+				div(class='modal-content')
+					div(class='modal-header')
+						button(type="button", class="close", data-dismiss="modal", aria-label="Close")
+							span(aria-hidden='true') &times;
+						h4(class='modal-title', id='myModalLabel') Login
+					div(class='modal-body')
+						form(
+							role="form"
+							action='/user/login'
+							method='post'
+						)
+							div(class='form-group')
+								label(for='emailInput') Email
+								input(type='email', class='form-control', id='emailInput', placeholder='Email', name='email')
+							div(class='form-group')
+								label(for='password1Input') Password
+								input(type='password', class='form-control', id='password1Input', placeholder='Password', name='pass')
+							div(class='form-group')
+								button(type='submit', class='btn btn-primary') Log in
+					div(class='modal-footer')
+						button(type="button", class="btn btn-default", data-dismiss="modal") Close		
+
+	div(class='container')
+		div(class='row')
+			div(class='col-sm-7 col-sm-offset-1')
+				a(href='/')
+					img(src='logo.png')
+		div(class='row search')
+			div(class='col-sm-8 col-sm-offset-2')
+				form(
+					role='form'
+					action='/search'
+					method='post'
+				)
+					div(class='input-group')
+						input(name='query', type="text", class="form-control input-lg", placeholder="Enter a country or city here...")
+						span(class='input-group-btn')
+							button(class="btn btn-default btn-lg", type="submit")
+								span(class="glyphicon glyphicon-search")
+		div(class='row')
+			h3(class='text-center') Popular Cities
+			div(class="col-md-3 col-md-offset-3 col-sm-offset-5")
+				div(class='thumbnail', height="250px", width="250px")
+					a(href='/search/city?name=Sydney')
+						h4 Sydney
+						img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Sydney%28from_air%29.jpg/300px-Sydney%28from_air%29.jpg")
+			div(class='col-md-3')
+				div(class='thumbnail', height="250px", width="250px")
+					a(href='/search/city?name=Melbourne')
+						h4 Melbourne
+						img(src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Aerial_of_Melbourne%27s_Central_Business_District_%28CBD%29.jpg/300px-Aerial_of_Melbourne%27s_Central_Business_District_%28CBD%29.jpg")
+
+
+
+
+
